@@ -6,19 +6,14 @@
     <title>Trigger Bot - WebApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
+        * { box-sizing: border-box; user-select: none; }
         body {
             background-color: #0b0c0f;
             color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 10px 15px 80px 15px;
         }
-
-        /* Top Header Navigation */
         .top-header {
             display: flex;
             justify-content: space-between;
@@ -27,12 +22,12 @@
             margin-bottom: 10px;
         }
         .lang-select {
-            background: transparent;
+            background: #15171e;
             color: #fff;
-            border: none;
+            border: 1px solid #232733;
+            border-radius: 8px;
+            padding: 5px;
             font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
         }
         .balance-container {
             background: #15171e;
@@ -43,10 +38,6 @@
             align-items: center;
             gap: 8px;
             font-weight: bold;
-            font-size: 16px;
-        }
-        .balance-coin {
-            color: #f3ba2f;
         }
         .add-btn {
             background: #22c55e;
@@ -55,30 +46,21 @@
             width: 22px;
             height: 22px;
             border-radius: 6px;
-            font-weight: bold;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: bold;
         }
-
-        /* Menu Nav Tab Bar */
         .nav-tabs {
             display: flex;
             gap: 15px;
             overflow-x: auto;
-            white-space: nowrap;
             padding-bottom: 8px;
             margin-bottom: 15px;
             border-bottom: 1px solid #1c1f26;
-            scrollbar-width: none;
         }
-        .nav-tabs::-webkit-scrollbar { display: none; }
         .tab-item {
             color: #838a9c;
             font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
+            font-weight: bold;
             cursor: pointer;
             padding-bottom: 5px;
         }
@@ -86,135 +68,46 @@
             color: #ffffff;
             border-bottom: 2px solid #ec4899;
         }
-
-        /* Content Sections */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Keyslar Grid Layout */
-        .cases-grid {
+        .cases-grid, .inventory-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
-        .case-card {
+        .case-card, .inventory-card {
             background: #14161d;
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #1f232d;
-            cursor: pointer;
-        }
-        .case-card img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-        }
-        .case-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #ef4444;
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 6px;
-        }
-        .case-badge.hit { background: #f97316; }
-        .case-details {
+            border-radius: 14px;
             padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .case-title {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .case-price {
-            background: #1e222d;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #f3ba2f;
-            font-weight: bold;
-        }
-
-        /* Inventar Grid */
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .inventory-card {
-            background: #14161d;
-            border-radius: 12px;
-            padding: 12px;
             border: 1px solid #1f232d;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            position: relative;
         }
-        .inv-title { font-size: 13px; font-weight: bold; margin-bottom: 6px; }
-        .inv-price { color: #f3ba2f; font-size: 12px; font-weight: bold; margin-bottom: 8px; }
-        .inv-sell-btn {
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            padding: 6px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 11px;
-            cursor: pointer;
+        .case-card img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; }
+        .case-badge {
+            position: absolute; top: 6px; right: 6px;
+            background: #ef4444; color: #fff; font-size: 9px; font-weight: bold;
+            padding: 2px 5px; border-radius: 4px;
         }
+        .case-title { font-weight: bold; font-size: 13px; margin: 6px 0; }
+        .case-price { color: #f3ba2f; font-weight: bold; font-size: 12px; }
 
-        /* Bonuslar (Vazifalar) Section */
         .task-card {
             background: #14161d;
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid #1f232d;
         }
-        .task-info h4 { margin: 0 0 4px 0; font-size: 14px; }
-        .task-info p { margin: 0; font-size: 11px; color: #6b7280; }
         .task-btn {
-            background: #0088cc;
-            color: #fff;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
+            background: #0088cc; color: #fff; border: none;
+            padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
-        /* Profile Section */
-        .profile-box {
-            background: #14161d;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #1f232d;
-        }
-        .profile-avatar {
-            width: 70px;
-            height: 70px;
-            background: #0088cc;
-            border-radius: 50%;
-            margin: 0 auto 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        /* Roulette Modal */
         .roulette-modal {
             display: none;
             position: fixed;
@@ -227,11 +120,299 @@
             padding: 20px;
         }
         .roulette-box {
-            width: 100%;
-            height: 120px;
+            width: 100%; height: 100px;
             border: 2px solid #f3ba2f;
             border-radius: 12px;
             overflow: hidden;
             position: relative;
             background: #111;
         }
+        .roulette-strip {
+            display: flex;
+            position: absolute;
+            left: 0;
+        }
+        .roulette-item {
+            min-width: 90px; height: 100px;
+            background: #181a20; margin-right: 4px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-size: 10px; text-align: center;
+        }
+        .roulette-pointer {
+            position: absolute; top: 0; left: 50%;
+            width: 3px; height: 100%;
+            background: #ef4444; transform: translateX(-50%); z-index: 10;
+        }
+        .action-btns { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
+        .sell-btn { background: #22c55e; color: #fff; border: none; flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
+        .keep-btn { background: #3b82f6; color: #fff; border: none; flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <select class="lang-select" onchange="changeLang(this.value)">
+            <option value="UZ">UZ</option>
+            <option value="RU">RU</option>
+            <option value="EN">EN</option>
+        </select>
+        <div class="balance-container">
+            <span>🪙</span>
+            <span id="user-balance">1331</span>
+            <button class="add-btn" onclick="addCoins()">+</button>
+        </div>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="tab-item active" onclick="switchTab('keyslar', this)" id="t-keys">KEYSLAR</div>
+        <div class="tab-item" onclick="switchTab('inventar', this)" id="t-inventar">INVENTAR</div>
+        <div class="tab-item" onclick="switchTab('bonuslar', this)" id="t-bonus">BONUSLAR</div>
+        <div class="tab-item" onclick="switchTab('profil', this)" id="t-profile">PROFIL</div>
+    </div>
+
+    <!-- TAB 1: KEYSLAR -->
+    <div id="keyslar" class="tab-content active">
+        <div class="cases-grid">
+            <div class="case-card" onclick="openCase('Grunt', 500)">
+                <span class="case-badge">🔥 XIT</span>
+                <img src="https://picsum.photos/200/120?random=1" alt="Grunt">
+                <div class="case-title">Grunt</div>
+                <div class="case-price">500 🪙</div>
+            </div>
+            <div class="case-card" onclick="openCase('Tundra', 750)">
+                <span class="case-badge">🔥 XIT</span>
+                <img src="https://picsum.photos/200/120?random=2" alt="Tundra">
+                <div class="case-title">Tundra</div>
+                <div class="case-price">750 🪙</div>
+            </div>
+            <div class="case-card" onclick="openCase('Capivara', 1000)">
+                <span class="case-badge">YANGI</span>
+                <img src="https://picsum.photos/200/120?random=3" alt="Capivara">
+                <div class="case-title">Capivara</div>
+                <div class="case-price">1000 🪙</div>
+            </div>
+            <div class="case-card" onclick="openCase('Namangan', 2000)">
+                <span class="case-badge">🔥 XIT</span>
+                <img src="https://picsum.photos/200/120?random=4" alt="Namangan">
+                <div class="case-title">Namangan</div>
+                <div class="case-price">2000 🪙</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: INVENTAR -->
+    <div id="inventar" class="tab-content">
+        <h3 style="margin-top:0;" id="txt-inv">Inventar</h3>
+        <div class="inventory-grid" id="inventory-grid">
+            <p style="color:#838a9c; font-size:12px; grid-column:span 2;" id="empty-msg">Inventaringiz bo'sh.</p>
+        </div>
+    </div>
+
+    <!-- TAB 3: BONUSLAR -->
+    <div id="bonuslar" class="tab-content">
+        <h3 style="margin-top:0;" id="txt-tasks">Vazifalar</h3>
+        <div class="task-card">
+            <div>
+                <div style="font-weight:bold; font-size:13px;">Familiyada bot nomi</div>
+                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +230 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimReward(50)">50 🪙</button>
+        </div>
+        <div class="task-card">
+            <div>
+                <div style="font-weight:bold; font-size:13px;">Bio da referal havola</div>
+                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +200 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimReward(20)">20 🪙</button>
+        </div>
+    </div>
+
+    <!-- TAB 4: PROFIL -->
+    <div id="profil" class="tab-content">
+        <div style="background:#14161d; border-radius:12px; padding:20px; text-align:center;">
+            <div style="font-size:40px; margin-bottom:10px;">👤</div>
+            <h3 id="user-name" style="margin:5px 0;">O'yinchi</h3>
+            <p id="user-id" style="color:#838a9c; font-size:12px;">ID: 12345678</p>
+            <div style="margin-top:10px; font-weight:bold; color:#f3ba2f;">
+                Balans: <span id="profile-balance">1331</span> 🪙
+            </div>
+        </div>
+    </div>
+
+    <!-- ROULETTE MODAL -->
+    <div class="roulette-modal" id="rouletteModal">
+        <h3 id="modalCaseName" style="margin-bottom:10px;">Keys ochilmoqda...</h3>
+        <div class="roulette-box">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-strip" id="rouletteStrip"></div>
+        </div>
+        <div id="resultBox" style="display:none; flex-direction:column; align-items:center; margin-top:15px;">
+            <h4 id="wonSkinName" style="margin:0; color:#22c55e;">AK-47 | Redline</h4>
+            <p id="wonSkinPrice" style="color:#f3ba2f; font-weight:bold; margin:5px 0;">800 🪙</p>
+            <div class="action-btns">
+                <button class="sell-btn" onclick="sellSkinDirect()">Sotish (<span id="sellPriceBtn">800</span> 🪙)</button>
+                <button class="keep-btn" onclick="keepInInventory()">Inventarga olish</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Safe Telegram WebApp init
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.expand();
+                if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                    document.getElementById('user-name').innerText = window.Telegram.WebApp.initDataUnsafe.user.first_name;
+                    document.getElementById('user-id').innerText = 'ID: ' + window.Telegram.WebApp.initDataUnsafe.user.id;
+                }
+            }
+        } catch (e) {
+            console.log("Telegram SDK browser test mode");
+        }
+
+        let balance = 1331;
+        let inventory = [];
+        let currentWonSkin = null;
+
+        const sampleSkins = [
+            { name: "Glock-18 | Water", price: 300 },
+            { name: "AWP | Atheris", price: 800 },
+            { name: "AK-47 | Redline", price: 1500 },
+            { name: "M4A4 | Howl", price: 5000 }
+        ];
+
+        function updateBalanceDisplay() {
+            document.getElementById('user-balance').innerText = balance;
+            document.getElementById('profile-balance').innerText = balance;
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function openCase(caseName, price) {
+            if (balance < price) {
+                alert("Tangalar yetarli emas!");
+                return;
+            }
+
+            balance -= price;
+            updateBalanceDisplay();
+
+            const modal = document.getElementById('rouletteModal');
+            const strip = document.getElementById('rouletteStrip');
+            const resultBox = document.getElementById('resultBox');
+
+            document.getElementById('modalCaseName').innerText = caseName + " Ochilmoqda...";
+            resultBox.style.display = 'none';
+            strip.style.transition = 'none';
+            strip.style.transform = 'translateX(0px)';
+            strip.innerHTML = '';
+            modal.style.display = 'flex';
+
+            let itemsHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const s = sampleSkins[Math.floor(Math.random() * sampleSkins.length)];
+                itemsHTML += `<div class="roulette-item"><div style="font-weight:bold;">${s.name}</div><div style="color:#f3ba2f;">${s.price} 🪙</div></div>`;
+            }
+            strip.innerHTML = itemsHTML;
+
+            currentWonSkin = sampleSkins[Math.floor(Math.random() * sampleSkins.length)];
+
+            setTimeout(() => {
+                strip.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
+                strip.style.transform = 'translateX(-2000px)';
+            }, 100);
+
+            setTimeout(() => {
+                document.getElementById('wonSkinName').innerText = currentWonSkin.name;
+                document.getElementById('wonSkinPrice').innerText = currentWonSkin.price + " 🪙";
+                document.getElementById('sellPriceBtn').innerText = currentWonSkin.price;
+                resultBox.style.display = 'flex';
+            }, 3300);
+        }
+
+        function sellSkinDirect() {
+            if (currentWonSkin) {
+                balance += currentWonSkin.price;
+                updateBalanceDisplay();
+            }
+            closeModal();
+        }
+
+        function keepInInventory() {
+            if (currentWonSkin) {
+                inventory.push({ ...currentWonSkin, id: Date.now() });
+                renderInventory();
+            }
+            closeModal();
+        }
+
+        function sellFromInventory(id) {
+            const index = inventory.findIndex(item => item.id === id);
+            if (index !== -1) {
+                balance += inventory[index].price;
+                inventory.splice(index, 1);
+                updateBalanceDisplay();
+                renderInventory();
+            }
+        }
+
+        function renderInventory() {
+            const grid = document.getElementById('inventory-grid');
+            if (inventory.length === 0) {
+                grid.innerHTML = `<p style="color:#838a9c; font-size:12px; grid-column:span 2;">Inventaringiz bo'sh.</p>`;
+                return;
+            }
+            grid.innerHTML = '';
+            inventory.forEach(item => {
+                grid.innerHTML += `
+                    <div class="inventory-card">
+                        <div style="font-size:12px; font-weight:bold;">${item.name}</div>
+                        <div style="color:#f3ba2f; font-size:11px; margin:5px 0;">${item.price} 🪙</div>
+                        <button style="background:#ef4444; color:#fff; border:none; padding:5px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="sellFromInventory(${item.id})">Sotish</button>
+                    </div>
+                `;
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('rouletteModal').style.display = 'none';
+            currentWonSkin = null;
+        }
+
+        function claimReward(amount) {
+            balance += amount;
+            updateBalanceDisplay();
+            alert("Sizga " + amount + " 🪙 berildi!");
+        }
+
+        function addCoins() {
+            balance += 500;
+            updateBalanceDisplay();
+        }
+
+        function changeLang(lang) {
+            if (lang === 'RU') {
+                document.getElementById('t-keys').innerText = 'КЕЙСЫ';
+                document.getElementById('t-inventar').innerText = 'ИНВЕНТАРЬ';
+                document.getElementById('t-bonus').innerText = 'БОНУСЫ';
+                document.getElementById('t-profile').innerText = 'ПРОФИЛЬ';
+                document.getElementById('txt-tasks').innerText = 'Задания';
+                document.getElementById('txt-inv').innerText = 'Инвентарь';
+            } else if (lang === 'UZ') {
+                document.getElementById('t-keys').innerText = 'KEYSLAR';
+                document.getElementById('t-inventar').innerText = 'INVENTAR';
+                document.getElementById('t-bonus').innerText = 'BONUSLAR';
+                document.getElementById('t-profile').innerText = 'PROFIL';
+                document.getElementById('txt-tasks').innerText = 'Vazifalar';
+                document.getElementById('txt-inv').innerText = 'Inventar';
+            }
+        }
+    </script>
+</body>
+</html>
