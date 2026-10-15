@@ -56,13 +56,16 @@
             padding-bottom: 8px;
             margin-bottom: 15px;
             border-bottom: 1px solid #1c1f26;
+            scrollbar-width: none;
         }
+        .nav-tabs::-webkit-scrollbar { display: none; }
         .tab-item {
             color: #838a9c;
             font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             padding-bottom: 5px;
+            white-space: nowrap;
         }
         .tab-item.active {
             color: #ffffff;
@@ -93,8 +96,7 @@
         .case-title { font-weight: bold; font-size: 13px; margin: 6px 0; }
         .case-price { color: #f3ba2f; font-weight: bold; font-size: 12px; }
 
-        /* Deposit Modal */
-        .deposit-card {
+        .task-card, .deposit-card {
             background: #14161d;
             border-radius: 12px;
             padding: 12px;
@@ -104,14 +106,13 @@
             align-items: center;
             border: 1px solid #1f232d;
         }
+        .task-btn {
+            background: #0088cc; color: #fff; border: none;
+            padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
         .pay-btn {
-            background: #22c55e;
-            color: #fff;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
+            background: #22c55e; color: #fff; border: none;
+            padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
         /* Roulette Modal */
@@ -136,7 +137,7 @@
         }
         .roulette-strip { display: flex; position: absolute; left: 0; }
         .roulette-item {
-            min-width: 100px; height: 110px;
+            min-width: 110px; max-width: 110px; height: 110px;
             background: #181a20; margin-right: 4px;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
@@ -175,6 +176,7 @@
     <div class="nav-tabs">
         <div class="tab-item active" onclick="switchTab('keyslar', this)" id="t-keys">KEYSLAR</div>
         <div class="tab-item" onclick="switchTab('inventar', this)" id="t-inventar">INVENTAR</div>
+        <div class="tab-item" onclick="switchTab('bonuslar', this)" id="t-bonus">BONUSLAR</div>
         <div class="tab-item" onclick="switchTab('tolov', this)" id="t-tolov">PUL SOLISH</div>
         <div class="tab-item" onclick="switchTab('profil', this)" id="t-profile">PROFIL</div>
     </div>
@@ -194,6 +196,18 @@
                 <div class="case-title">Tundra Case</div>
                 <div class="case-price">750 🪙</div>
             </div>
+            <div class="case-card" onclick="openCase('Capivara', 1000)">
+                <span class="case-badge">YANGI</span>
+                <img src="https://picsum.photos/200/120?random=3" alt="Capivara">
+                <div class="case-title">Capivara Case</div>
+                <div class="case-price">1000 🪙</div>
+            </div>
+            <div class="case-card" onclick="openCase('Namangan', 2000)">
+                <span class="case-badge">🔥 XIT</span>
+                <img src="https://picsum.photos/200/120?random=4" alt="Namangan">
+                <div class="case-title">Namangan Case</div>
+                <div class="case-price">2000 🪙</div>
+            </div>
         </div>
     </div>
 
@@ -205,15 +219,34 @@
         </div>
     </div>
 
-    <!-- TAB 3: HAQIQIY PUL SOLISH -->
+    <!-- TAB 3: BONUSLAR / VAZIFALAR -->
+    <div id="bonuslar" class="tab-content">
+        <h3 style="margin-top:0;" id="txt-tasks">Vazifalar</h3>
+        <div class="task-card">
+            <div>
+                <div style="font-weight:bold; font-size:13px;">Familiyada bot nomi</div>
+                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +230 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimReward(50)">50 🪙</button>
+        </div>
+        <div class="task-card">
+            <div>
+                <div style="font-weight:bold; font-size:13px;">Bio da referal havola</div>
+                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +200 🪙</div>
+            </div>
+            <button class="task-btn" onclick="claimReward(20)">20 🪙</button>
+        </div>
+    </div>
+
+    <!-- TAB 4: PUL SOLISH -->
     <div id="tolov" class="tab-content">
         <h3 style="margin-top:0;">Hisobni To'ldirish</h3>
-        <p style="font-size:12px; color:#838a9c;">Telegram Stars yoki Click/Payme orqali tanga sotib oling:</p>
+        <p style="font-size:12px; color:#838a9c;">Telegram Stars orqali tanga sotib oling:</p>
 
         <div class="deposit-card">
             <div>
                 <div style="font-weight:bold; font-size:14px;">1 000 🪙 Monetalar</div>
-                <div style="font-size:11px; color:#838a9c;">100 Telegram Stars / 15 000 UZS</div>
+                <div style="font-size:11px; color:#838a9c;">100 Telegram Stars</div>
             </div>
             <button class="pay-btn" onclick="buyCoins(1000, 100)">Sotib olish</button>
         </div>
@@ -221,13 +254,13 @@
         <div class="deposit-card">
             <div>
                 <div style="font-weight:bold; font-size:14px;">5 000 🪙 Monetalar</div>
-                <div style="font-size:11px; color:#838a9c;">450 Telegram Stars / 65 000 UZS</div>
+                <div style="font-size:11px; color:#838a9c;">450 Telegram Stars</div>
             </div>
             <button class="pay-btn" onclick="buyCoins(5000, 450)">Sotib olish</button>
         </div>
     </div>
 
-    <!-- TAB 4: PROFIL -->
+    <!-- TAB 5: PROFIL -->
     <div id="profil" class="tab-content">
         <div style="background:#14161d; border-radius:12px; padding:20px; text-align:center;">
             <div style="font-size:40px; margin-bottom:10px;">👤</div>
@@ -270,7 +303,7 @@
         let inventory = [];
         let currentWonSkin = null;
 
-        // GRUNT CASE: Pichoq olib tashlandi! Faqat qurollar qoldi.
+        // GRUNT CASE: Barcha Skinlar va Aniq Narxlar (Pichoqsiz)
         const gruntHighSkins = [
             { name: "MAC-10 | Monkeyflage", price: 4517, type: "purple" },
             { name: "P90 | Freight", price: 3267, type: "purple" },
@@ -336,18 +369,28 @@
             strip.innerHTML = '';
             modal.style.display = 'flex';
 
-            let itemsHTML = '';
-            for (let i = 0; i < 35; i++) {
-                const s = (i % 4 === 0) ? gruntHighSkins[Math.floor(Math.random() * gruntHighSkins.length)] : gruntLowSkins[Math.floor(Math.random() * gruntLowSkins.length)];
-                itemsHTML += `<div class="roulette-item ${s.type}"><div style="font-weight:bold; font-size:11px;">${s.name}</div><div style="color:#f3ba2f; margin-top:4px;">${s.price} 🪙</div></div>`;
-            }
-            strip.innerHTML = itemsHTML;
-
             currentWonSkin = getRandomSkin();
+
+            // Ruletka tasmasiga skinlar joylanadi (28-pozitsiya - yutuq)
+            let itemsArray = [];
+            for (let i = 0; i < 35; i++) {
+                if (i === 28) {
+                    itemsArray.push(currentWonSkin);
+                } else {
+                    const s = (i % 5 === 0) ? gruntHighSkins[Math.floor(Math.random() * gruntHighSkins.length)] : gruntLowSkins[Math.floor(Math.random() * gruntLowSkins.length)];
+                    itemsArray.push(s);
+                }
+            }
+
+            let itemsHTML = '';
+            itemsArray.forEach(s => {
+                itemsHTML += `<div class="roulette-item ${s.type}"><div style="font-weight:bold; font-size:10px;">${s.name}</div><div style="color:#f3ba2f; margin-top:4px;">${s.price} 🪙</div></div>`;
+            });
+            strip.innerHTML = itemsHTML;
 
             setTimeout(() => {
                 strip.style.transition = 'transform 3.5s cubic-bezier(0.1, 1, 0.1, 1)';
-                strip.style.transform = 'translateX(-2600px)';
+                strip.style.transform = 'translateX(-3050px)';
             }, 100);
 
             setTimeout(() => {
@@ -356,19 +399,6 @@
                 document.getElementById('sellPriceBtn').innerText = currentWonSkin.price;
                 resultBox.style.display = 'flex';
             }, 3800);
-        }
-
-        function buyCoins(coins, starsPrice) {
-            // Telegram Stars to'lovi xabarnomasini bot backend'iga yuborish
-            if (tg.sendData) {
-                tg.sendData(JSON.stringify({ action: "buy_stars", coins: coins, stars: starsPrice }));
-                alert("To'lov so'rovi botga yuborildi. Chatda to'lov oynasi ochiladi!");
-            } else {
-                // Test uchun
-                balance += coins;
-                updateBalanceDisplay();
-                alert(coins + " 🪙 qo'shildi!");
-            }
         }
 
         function sellSkinDirect() {
@@ -387,6 +417,16 @@
             closeModal();
         }
 
+        function sellFromInventory(id) {
+            const index = inventory.findIndex(item => item.id === id);
+            if (index !== -1) {
+                balance += inventory[index].price;
+                inventory.splice(index, 1);
+                updateBalanceDisplay();
+                renderInventory();
+            }
+        }
+
         function renderInventory() {
             const grid = document.getElementById('inventory-grid');
             if (inventory.length === 0) {
@@ -399,6 +439,7 @@
                     <div class="inventory-card">
                         <div style="font-size:12px; font-weight:bold;">${item.name}</div>
                         <div style="color:#f3ba2f; font-size:11px; margin:5px 0;">${item.price} 🪙</div>
+                        <button style="background:#ef4444; color:#fff; border:none; padding:5px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="sellFromInventory(${item.id})">Sotish</button>
                     </div>
                 `;
             });
@@ -408,6 +449,24 @@
             document.getElementById('rouletteModal').style.display = 'none';
             currentWonSkin = null;
         }
-    </script>
-</body>
-</html>
+
+        function claimReward(amount) {
+            balance += amount;
+            updateBalanceDisplay();
+            alert("Sizga " + amount + " 🪙 mukofot berildi!");
+        }
+
+        function buyCoins(coins, starsPrice) {
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({ action: "buy_stars", coins: coins, stars: starsPrice }));
+                alert("To'lov so'rovi botga yuborildi!");
+            } else {
+                balance += coins;
+                updateBalanceDisplay();
+                alert(coins + " 🪙 qo'shildi!");
+            }
+        }
+
+        function changeLang(lang) {
+            if (lang === 'RU') {
+                document.getElementById('t-keys').innerText = 'КЕЙСЫ';
