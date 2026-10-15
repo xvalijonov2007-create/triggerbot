@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigger Bot - WebApp</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #0d0e12;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #181a20;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .balance {
+            color: #f3ba2f;
+            font-weight: bold;
+        }
+
+        /* Keys Banner */
+        .case-banner {
+            background: #181a20;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .case-banner img {
+            width: 140px;
+            border-radius: 8px;
+        }
+        .case-info h2 { margin: 0 0 10px 0; }
+        .multi-btn {
+            display: flex;
+            gap: 8px;
+            background: #23262f;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .multi-btn button {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .multi-btn button.active {
+            background: #3b3e4a;
+            color: #fff;
+        }
+        .open-btn {
+            background: #0088cc;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Grid - Skinlar ro'yxati */
+        .skin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+        .skin-card {
+            background: #181a20;
+            border-radius: 12px;
+            padding: 10px;
+            position: relative;
+            text-align: center;
+            border-bottom: 3px solid #3b82f6; /* Drop raritiya qarab o'zgaradi */
+        }
+        .skin-card .badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #00000080;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #22c55e;
+        }
+        .skin-card img {
+            width: 100%;
+            max-height: 80px;
+            object-fit: contain;
+            margin: 10px 0;
+        }
+        .skin-title { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+        .skin-price { font-size: 10px; color: #f3ba2f; }
+
+        /* Ruletka Modal */
+        .roulette-container {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+        .roulette-wrapper {
+            width: 90%;
+            height: 120px;
+            border: 2px solid #f3ba2f;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .roulette-strip {
+            display: flex;
+            position: absolute;
+            left: 0;
+            transition: transform 4s cubic-bezier(0.1, 1, 0.1, 1);
+        }
+        .roulette-item {
+            min-width: 100px;
+            height: 120px;
+            background: #181a20;
+            margin-right: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        .roulette-marker {
+            position: absolute;
+            top: 0; left: 50%;
+            width: 4px; height: 100%;
+            background: red;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div><strong>TRIGGER BOT</strong></div>
+        <div class="balance">Balans: <span id="user-balance">135</span> 🪙</div>
+    </div>
+
+    <!-- Case Bosh qismi -->
+    <div class="case-banner">
+        <img src="https://via.placeholder.com/150/8B4513/FFFFFF?text=Grunt+Case" alt="Case">
+        <div class="case-info">
+            <h2>Grunt Case</h2>
+            <div class="multi-btn">
+                <button class="active">x1</button>
+                <button>x2</button>
+                <button>x3</button>
+                <button>x5</button>
+                <button>x10</button>
+            </div>
+            <button class="open-btn" onclick="startRoulette()">365 🪙 — Ochish</button>
+        </div>
+    </div>
+
+    <!-- Skinlar ro'yxati -->
+    <h3>Keys ichidagi skinlar:</h3>
+    <div class="skin-grid" id="skin-grid">
+        <!-- JS orqali dinamik yuklanadi -->
+    </div>
+
+    <!-- Ruletka Modali -->
+    <div class="roulette-container" id="roulette-modal">
+        <div class="roulette-wrapper">
+            <div class="roulette-marker"></div>
+            <div class="roulette-strip" id="roulette-strip"></div>
+        </div>
+        <h3 id="win-text" style="margin-top: 20px;"></h3>
+        <button class="open-btn" style="width: 150px; margin-top: 10px;" onclick="closeRoulette()">Yopish</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const sampleSkins = [
+            { name: "SCAR-20 Fragments", price: "5 000 🪙", chance: "0.01%", img: "https://via.placeholder.com/80?text=SCAR-20" },
+            { name: "MAC-10 Monkeyflage", price: "4 510 🪙", chance: "0.01%", img: "https://via.placeholder.com/80?text=MAC-10" },
+            { name: "P90 Freight", price: "3 262 🪙", chance: "0.01%", img: "https://via.placeholder.com/80?text=P90" },
+            { name: "Five-SeveN Scrawl", price: "1 862 🪙", chance: "0.12%", img: "https://via.placeholder.com/80?text=FiveSeven" },
+            { name: "P250 Re.built", price: "1 840 🪙", chance: "0.12%", img: "https://via.placeholder.com/80?text=P250" },
+            { name: "UMP-45 Mudder", price: "1 552 🪙", chance: "0.20%", img: "https://via.placeholder.com/80?text=UMP" }
+        ];
+
+        // Gridni to'ldirish
+        const grid = document.getElementById('skin-grid');
+        sampleSkins.forEach(skin => {
+            grid.innerHTML += `
+                <div class="skin-card">
+                    <span class="badge">${skin.chance}</span>
+                    <img src="${skin.img}" alt="${skin.name}">
+                    <div class="skin-title">${skin.name}</div>
+                    <div class="skin-price">${skin.price}</div>
+                </div>
+            `;
+        });
+
+        // Ruletka Animatsiyasi Mantiqi
+        function startRoulette() {
+            const modal = document.getElementById('roulette-modal');
+            const strip = document.getElementById('roulette-strip');
+            const winText = document.getElementById('win-text');
+
+            strip.style.transition = 'none';
+            strip.style.transform = 'translateX(0px)';
+            strip.innerHTML = '';
+            winText.innerText = '';
+            modal.style.display = 'flex';
+
+            // Tasodifiy strip hosil qilish (50 ta skin)
+            let itemsHTML = '';
+            for(let i = 0; i < 50; i++) {
+                const randSkin = sampleSkins[Math.floor(Math.random() * sampleSkins.length)];
+                itemsHTML += `
+                    <div class="roulette-item">
+                        <img src="${randSkin.img}" width="50">
+                        <div>${randSkin.name}</div>
+                    </div>
+                `;
+            }
+            strip.innerHTML = itemsHTML;
+
+            // Animatsiyani boshlash
+            setTimeout(() => {
+                strip.style.transition = 'transform 4s cubic-bezier(0.1, 1, 0.1, 1)';
+                // 35-skin stop nuqtasi qilib belgilandi
+                const stopOffset = -(35 * 105) + 120;
+                strip.style.transform = `translateX(${stopOffset}px)`;
+            }, 100);
+
+            setTimeout(() => {
+                winText.innerText = "🎉 Tabriklaymiz! Skin inventaringizga qo'shildi.";
+            }, 4200);
+        }
+
+        function closeRoulette() {
+            document.getElementById('roulette-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
