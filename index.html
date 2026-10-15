@@ -10,7 +10,7 @@
         body {
             background-color: #0b0c0f;
             color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0;
             padding: 10px 15px 80px 15px;
         }
@@ -93,7 +93,8 @@
         .case-title { font-weight: bold; font-size: 13px; margin: 6px 0; }
         .case-price { color: #f3ba2f; font-weight: bold; font-size: 12px; }
 
-        .task-card {
+        /* Deposit Modal */
+        .deposit-card {
             background: #14161d;
             border-radius: 12px;
             padding: 12px;
@@ -103,11 +104,17 @@
             align-items: center;
             border: 1px solid #1f232d;
         }
-        .task-btn {
-            background: #0088cc; color: #fff; border: none;
-            padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        .pay-btn {
+            background: #22c55e;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
+        /* Roulette Modal */
         .roulette-modal {
             display: none;
             position: fixed;
@@ -120,33 +127,34 @@
             padding: 20px;
         }
         .roulette-box {
-            width: 100%; height: 100px;
+            width: 100%; height: 110px;
             border: 2px solid #f3ba2f;
             border-radius: 12px;
             overflow: hidden;
             position: relative;
             background: #111;
         }
-        .roulette-strip {
-            display: flex;
-            position: absolute;
-            left: 0;
-        }
+        .roulette-strip { display: flex; position: absolute; left: 0; }
         .roulette-item {
-            min-width: 90px; height: 100px;
+            min-width: 100px; height: 110px;
             background: #181a20; margin-right: 4px;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            font-size: 10px; text-align: center;
+            font-size: 10px; text-align: center; padding: 5px;
+            border-bottom: 3px solid #3b3e4a;
         }
+        .roulette-item.red { border-bottom-color: #ef4444; }
+        .roulette-item.purple { border-bottom-color: #a855f7; }
+        .roulette-item.blue { border-bottom-color: #3b82f6; }
+        
         .roulette-pointer {
             position: absolute; top: 0; left: 50%;
             width: 3px; height: 100%;
             background: #ef4444; transform: translateX(-50%); z-index: 10;
         }
         .action-btns { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
-        .sell-btn { background: #22c55e; color: #fff; border: none; flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
-        .keep-btn { background: #3b82f6; color: #fff; border: none; flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
+        .sell-btn { background: #22c55e; color: #fff; border: none; flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .keep-btn { background: #0284c7; color: #fff; border: none; flex: 1; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -160,14 +168,14 @@
         <div class="balance-container">
             <span>🪙</span>
             <span id="user-balance">1331</span>
-            <button class="add-btn" onclick="addCoins()">+</button>
+            <button class="add-btn" onclick="switchTab('tolov', document.getElementById('t-tolov'))">+</button>
         </div>
     </div>
 
     <div class="nav-tabs">
         <div class="tab-item active" onclick="switchTab('keyslar', this)" id="t-keys">KEYSLAR</div>
         <div class="tab-item" onclick="switchTab('inventar', this)" id="t-inventar">INVENTAR</div>
-        <div class="tab-item" onclick="switchTab('bonuslar', this)" id="t-bonus">BONUSLAR</div>
+        <div class="tab-item" onclick="switchTab('tolov', this)" id="t-tolov">PUL SOLISH</div>
         <div class="tab-item" onclick="switchTab('profil', this)" id="t-profile">PROFIL</div>
     </div>
 
@@ -177,26 +185,14 @@
             <div class="case-card" onclick="openCase('Grunt', 500)">
                 <span class="case-badge">🔥 XIT</span>
                 <img src="https://picsum.photos/200/120?random=1" alt="Grunt">
-                <div class="case-title">Grunt</div>
+                <div class="case-title">Grunt Case</div>
                 <div class="case-price">500 🪙</div>
             </div>
             <div class="case-card" onclick="openCase('Tundra', 750)">
                 <span class="case-badge">🔥 XIT</span>
                 <img src="https://picsum.photos/200/120?random=2" alt="Tundra">
-                <div class="case-title">Tundra</div>
+                <div class="case-title">Tundra Case</div>
                 <div class="case-price">750 🪙</div>
-            </div>
-            <div class="case-card" onclick="openCase('Capivara', 1000)">
-                <span class="case-badge">YANGI</span>
-                <img src="https://picsum.photos/200/120?random=3" alt="Capivara">
-                <div class="case-title">Capivara</div>
-                <div class="case-price">1000 🪙</div>
-            </div>
-            <div class="case-card" onclick="openCase('Namangan', 2000)">
-                <span class="case-badge">🔥 XIT</span>
-                <img src="https://picsum.photos/200/120?random=4" alt="Namangan">
-                <div class="case-title">Namangan</div>
-                <div class="case-price">2000 🪙</div>
             </div>
         </div>
     </div>
@@ -205,26 +201,29 @@
     <div id="inventar" class="tab-content">
         <h3 style="margin-top:0;" id="txt-inv">Inventar</h3>
         <div class="inventory-grid" id="inventory-grid">
-            <p style="color:#838a9c; font-size:12px; grid-column:span 2;" id="empty-msg">Inventaringiz bo'sh.</p>
+            <p style="color:#838a9c; font-size:12px; grid-column:span 2;">Inventaringiz bo'sh.</p>
         </div>
     </div>
 
-    <!-- TAB 3: BONUSLAR -->
-    <div id="bonuslar" class="tab-content">
-        <h3 style="margin-top:0;" id="txt-tasks">Vazifalar</h3>
-        <div class="task-card">
+    <!-- TAB 3: HAQIQIY PUL SOLISH -->
+    <div id="tolov" class="tab-content">
+        <h3 style="margin-top:0;">Hisobni To'ldirish</h3>
+        <p style="font-size:12px; color:#838a9c;">Telegram Stars yoki Click/Payme orqali tanga sotib oling:</p>
+
+        <div class="deposit-card">
             <div>
-                <div style="font-weight:bold; font-size:13px;">Familiyada bot nomi</div>
-                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +230 🪙</div>
+                <div style="font-weight:bold; font-size:14px;">1 000 🪙 Monetalar</div>
+                <div style="font-size:11px; color:#838a9c;">100 Telegram Stars / 15 000 UZS</div>
             </div>
-            <button class="task-btn" onclick="claimReward(50)">50 🪙</button>
+            <button class="pay-btn" onclick="buyCoins(1000, 100)">Sotib olish</button>
         </div>
-        <div class="task-card">
+
+        <div class="deposit-card">
             <div>
-                <div style="font-weight:bold; font-size:13px;">Bio da referal havola</div>
-                <div style="font-size:10px; color:#838a9c;">0/10 Kun · Maks +200 🪙</div>
+                <div style="font-weight:bold; font-size:14px;">5 000 🪙 Monetalar</div>
+                <div style="font-size:11px; color:#838a9c;">450 Telegram Stars / 65 000 UZS</div>
             </div>
-            <button class="task-btn" onclick="claimReward(20)">20 🪙</button>
+            <button class="pay-btn" onclick="buyCoins(5000, 450)">Sotib olish</button>
         </div>
     </div>
 
@@ -242,44 +241,58 @@
 
     <!-- ROULETTE MODAL -->
     <div class="roulette-modal" id="rouletteModal">
-        <h3 id="modalCaseName" style="margin-bottom:10px;">Keys ochilmoqda...</h3>
+        <h3 id="modalCaseName" style="margin-bottom:10px;">Grunt Case (x1)</h3>
         <div class="roulette-box">
             <div class="roulette-pointer"></div>
             <div class="roulette-strip" id="rouletteStrip"></div>
         </div>
         <div id="resultBox" style="display:none; flex-direction:column; align-items:center; margin-top:15px;">
-            <h4 id="wonSkinName" style="margin:0; color:#22c55e;">AK-47 | Redline</h4>
-            <p id="wonSkinPrice" style="color:#f3ba2f; font-weight:bold; margin:5px 0;">800 🪙</p>
+            <h3 id="wonSkinName" style="margin:0; color:#22c55e;">MAC-10 | Monkeyflage</h3>
+            <p id="wonSkinPrice" style="color:#f3ba2f; font-weight:bold; font-size:18px; margin:5px 0;">4517 🪙</p>
             <div class="action-btns">
-                <button class="sell-btn" onclick="sellSkinDirect()">Sotish (<span id="sellPriceBtn">800</span> 🪙)</button>
+                <button class="sell-btn" onclick="sellSkinDirect()">Sotish (<span id="sellPriceBtn">4517</span> 🪙)</button>
                 <button class="keep-btn" onclick="keepInInventory()">Inventarga olish</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Safe Telegram WebApp init
+        const tg = window.Telegram.WebApp;
         try {
-            if (window.Telegram && window.Telegram.WebApp) {
-                window.Telegram.WebApp.expand();
-                if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-                    document.getElementById('user-name').innerText = window.Telegram.WebApp.initDataUnsafe.user.first_name;
-                    document.getElementById('user-id').innerText = 'ID: ' + window.Telegram.WebApp.initDataUnsafe.user.id;
-                }
+            tg.expand();
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
+                document.getElementById('user-id').innerText = 'ID: ' + tg.initDataUnsafe.user.id;
             }
-        } catch (e) {
-            console.log("Telegram SDK browser test mode");
-        }
+        } catch (e) {}
 
         let balance = 1331;
         let inventory = [];
         let currentWonSkin = null;
 
-        const sampleSkins = [
-            { name: "Glock-18 | Water", price: 300 },
-            { name: "AWP | Atheris", price: 800 },
-            { name: "AK-47 | Redline", price: 1500 },
-            { name: "M4A4 | Howl", price: 5000 }
+        // GRUNT CASE: Pichoq olib tashlandi! Faqat qurollar qoldi.
+        const gruntHighSkins = [
+            { name: "MAC-10 | Monkeyflage", price: 4517, type: "purple" },
+            { name: "P90 | Freight", price: 3267, type: "purple" },
+            { name: "SCAR-20 | Fragments", price: 2832, type: "purple" },
+            { name: "P250 | Re.built", price: 2500, type: "purple" },
+            { name: "Five-SeveN | Scrawl", price: 1910, type: "purple" },
+            { name: "AK-47 | Redline", price: 1600, type: "red" }
+        ];
+
+        // 500 🪙 dan kam tushadigan skinlar (85% ehtimollik bilan tushadi)
+        const gruntLowSkins = [
+            { name: "AUG | Sweeper", price: 470, type: "blue" },
+            { name: "Nova | Sand Dune", price: 460, type: "blue" },
+            { name: "UMP-45 | Green Swirl", price: 417, type: "blue" },
+            { name: "MP5-SD | Lime Hex", price: 417, type: "blue" },
+            { name: "MAC-10 | Bronzer", price: 257, type: "blue" },
+            { name: "SG 553 | Night Camo", price: 245, type: "blue" },
+            { name: "MP9 | Buff Blue", price: 242, type: "blue" },
+            { name: "FAMAS | Palm", price: 220, type: "blue" },
+            { name: "Sawed-Off | Crimson Batik", price: 197, type: "blue" },
+            { name: "SCAR-20 | Zinc", price: 125, type: "blue" },
+            { name: "MAG-7 | Copper Oxide", price: 125, type: "blue" }
         ];
 
         function updateBalanceDisplay() {
@@ -291,12 +304,21 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+            if(el) el.classList.add('active');
+        }
+
+        function getRandomSkin() {
+            const rand = Math.random() * 100;
+            if (rand < 85) {
+                return gruntLowSkins[Math.floor(Math.random() * gruntLowSkins.length)];
+            } else {
+                return gruntHighSkins[Math.floor(Math.random() * gruntHighSkins.length)];
+            }
         }
 
         function openCase(caseName, price) {
             if (balance < price) {
-                alert("Tangalar yetarli emas!");
+                alert("Tangalar yetarli emas! Pul soling.");
                 return;
             }
 
@@ -307,7 +329,7 @@
             const strip = document.getElementById('rouletteStrip');
             const resultBox = document.getElementById('resultBox');
 
-            document.getElementById('modalCaseName').innerText = caseName + " Ochilmoqda...";
+            document.getElementById('modalCaseName').innerText = caseName + " Case (x1)";
             resultBox.style.display = 'none';
             strip.style.transition = 'none';
             strip.style.transform = 'translateX(0px)';
@@ -315,17 +337,17 @@
             modal.style.display = 'flex';
 
             let itemsHTML = '';
-            for (let i = 0; i < 30; i++) {
-                const s = sampleSkins[Math.floor(Math.random() * sampleSkins.length)];
-                itemsHTML += `<div class="roulette-item"><div style="font-weight:bold;">${s.name}</div><div style="color:#f3ba2f;">${s.price} 🪙</div></div>`;
+            for (let i = 0; i < 35; i++) {
+                const s = (i % 4 === 0) ? gruntHighSkins[Math.floor(Math.random() * gruntHighSkins.length)] : gruntLowSkins[Math.floor(Math.random() * gruntLowSkins.length)];
+                itemsHTML += `<div class="roulette-item ${s.type}"><div style="font-weight:bold; font-size:11px;">${s.name}</div><div style="color:#f3ba2f; margin-top:4px;">${s.price} 🪙</div></div>`;
             }
             strip.innerHTML = itemsHTML;
 
-            currentWonSkin = sampleSkins[Math.floor(Math.random() * sampleSkins.length)];
+            currentWonSkin = getRandomSkin();
 
             setTimeout(() => {
-                strip.style.transition = 'transform 3s cubic-bezier(0.1, 1, 0.1, 1)';
-                strip.style.transform = 'translateX(-2000px)';
+                strip.style.transition = 'transform 3.5s cubic-bezier(0.1, 1, 0.1, 1)';
+                strip.style.transform = 'translateX(-2600px)';
             }, 100);
 
             setTimeout(() => {
@@ -333,7 +355,20 @@
                 document.getElementById('wonSkinPrice').innerText = currentWonSkin.price + " 🪙";
                 document.getElementById('sellPriceBtn').innerText = currentWonSkin.price;
                 resultBox.style.display = 'flex';
-            }, 3300);
+            }, 3800);
+        }
+
+        function buyCoins(coins, starsPrice) {
+            // Telegram Stars to'lovi xabarnomasini bot backend'iga yuborish
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify({ action: "buy_stars", coins: coins, stars: starsPrice }));
+                alert("To'lov so'rovi botga yuborildi. Chatda to'lov oynasi ochiladi!");
+            } else {
+                // Test uchun
+                balance += coins;
+                updateBalanceDisplay();
+                alert(coins + " 🪙 qo'shildi!");
+            }
         }
 
         function sellSkinDirect() {
@@ -352,16 +387,6 @@
             closeModal();
         }
 
-        function sellFromInventory(id) {
-            const index = inventory.findIndex(item => item.id === id);
-            if (index !== -1) {
-                balance += inventory[index].price;
-                inventory.splice(index, 1);
-                updateBalanceDisplay();
-                renderInventory();
-            }
-        }
-
         function renderInventory() {
             const grid = document.getElementById('inventory-grid');
             if (inventory.length === 0) {
@@ -374,7 +399,6 @@
                     <div class="inventory-card">
                         <div style="font-size:12px; font-weight:bold;">${item.name}</div>
                         <div style="color:#f3ba2f; font-size:11px; margin:5px 0;">${item.price} 🪙</div>
-                        <button style="background:#ef4444; color:#fff; border:none; padding:5px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="sellFromInventory(${item.id})">Sotish</button>
                     </div>
                 `;
             });
@@ -383,35 +407,6 @@
         function closeModal() {
             document.getElementById('rouletteModal').style.display = 'none';
             currentWonSkin = null;
-        }
-
-        function claimReward(amount) {
-            balance += amount;
-            updateBalanceDisplay();
-            alert("Sizga " + amount + " 🪙 berildi!");
-        }
-
-        function addCoins() {
-            balance += 500;
-            updateBalanceDisplay();
-        }
-
-        function changeLang(lang) {
-            if (lang === 'RU') {
-                document.getElementById('t-keys').innerText = 'КЕЙСЫ';
-                document.getElementById('t-inventar').innerText = 'ИНВЕНТАРЬ';
-                document.getElementById('t-bonus').innerText = 'БОНУСЫ';
-                document.getElementById('t-profile').innerText = 'ПРОФИЛЬ';
-                document.getElementById('txt-tasks').innerText = 'Задания';
-                document.getElementById('txt-inv').innerText = 'Инвентарь';
-            } else if (lang === 'UZ') {
-                document.getElementById('t-keys').innerText = 'KEYSLAR';
-                document.getElementById('t-inventar').innerText = 'INVENTAR';
-                document.getElementById('t-bonus').innerText = 'BONUSLAR';
-                document.getElementById('t-profile').innerText = 'PROFIL';
-                document.getElementById('txt-tasks').innerText = 'Vazifalar';
-                document.getElementById('txt-inv').innerText = 'Inventar';
-            }
         }
     </script>
 </body>
